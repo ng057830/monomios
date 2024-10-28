@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Álgebra - Monomios</title>
+    <!-- Cargar MathJax versión 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #3F3D56;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --background-color: #F0F4FF;
+            --text-color: #333333;
+            --accent-color: #FF6584;
+            --hint-color: #FFD700;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .exercise-container {
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #fafafa;
+        }
+
+        .exercise-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+
+        .step {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        select {
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            width: 100%;
+            max-width: 300px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.3);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            color: var(--success-color);
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: var(--error-color);
+        }
+
+        .hint {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: var(--hint-color);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .final-message {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .exercise-title {
+                font-size: 1.25rem;
+            }
+
+            button {
+                width: 100%;
+                padding: 0.75rem;
+            }
+        }
+
+        /* Fuente personalizada */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Práctica de Álgebra - Monomios</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <div id="exercise-container" class="exercise-container">
+            <!-- El contenido se llenará dinámicamente con JavaScript -->
+        </div>
+
+        <div style="text-align: center;">
+            <button id="check-button" onclick="checkAnswer()">Verificar Respuesta</button>
+            <button id="next-button" onclick="nextStep()" style="display: none;">Siguiente Paso</button>
+        </div>
+    </div>
+
+    <script>
+        // Definición de ejercicios
+        const exercises = {
+            multiplication: [
+                {
+                    expression: '(2x^2)(3x^3)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['2', '5', '6', '8'],
+                            correct: '6'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^2', 'x^3', 'x^5', 'x^6'],
+                            correct: 'x^5'
+                        }
+                    ],
+                    hints: [
+                        'Recuerda que para multiplicar monomios, multiplicas los coeficientes y sumas los exponentes.',
+                        'Los coeficientes son los números: 2 y 3.',
+                        'Los exponentes de x son 2 y 3.',
+                        'La respuesta final debe tener la forma (número)x^(exponente).'
+                    ],
+                    finalAnswer: '6x^5'
+                },
+                {
+                    expression: '(4x)(5x^2)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['4', '9', '20', '25'],
+                            correct: '20'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x', 'x^2', 'x^3', 'x^4'],
+                            correct: 'x^3'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica los números delante de x.',
+                        'Suma los exponentes de x.',
+                        'Los coeficientes son 4 y 5.',
+                        'La respuesta final es 20x^3.'
+                    ],
+                    finalAnswer: '20x^3'
+                },
+                {
+                    expression: '(3x^3)(2x^4)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['5', '6', '7', '8'],
+                            correct: '6'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^7', 'x^6', 'x^5', 'x^8'],
+                            correct: 'x^7'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 3 por 2.',
+                        'Suma los exponentes 3 y 4.',
+                        'La respuesta es 6x^7.',
+                        'Recuerda que al multiplicar potencias con la misma base, sumas los exponentes.'
+                    ],
+                    finalAnswer: '6x^7'
+                },
+                {
+                    expression: '(5x^2)(4x^3)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['9', '10', '20', '25'],
+                            correct: '20'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^5'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 5 por 4.',
+                        'Suma los exponentes 2 y 3.',
+                        'La respuesta es 20x^5.',
+                        'La forma final es (coeficiente)x^(exponente).'
+                    ],
+                    finalAnswer: '20x^5'
+                },
+                {
+                    expression: '(7x^3)(3x^2)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['10', '20', '21', '24'],
+                            correct: '21'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^5', 'x^6', 'x^4', 'x^3'],
+                            correct: 'x^5'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 7 por 3.',
+                        'Suma los exponentes 3 y 2.',
+                        'La respuesta es 21x^5.',
+                        'Recuerda que al multiplicar potencias con la misma base, sumas los exponentes.'
+                    ],
+                    finalAnswer: '21x^5'
+                },
+                {
+                    expression: '(6x^4)(2x^3)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['8', '10', '12', '14'],
+                            correct: '12'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^6', 'x^7', 'x^8', 'x^5'],
+                            correct: 'x^7'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 6 por 2.',
+                        'Suma los exponentes 4 y 3.',
+                        'La respuesta es 12x^7.',
+                        'La forma final es (coeficiente)x^(exponente).'
+                    ],
+                    finalAnswer: '12x^7'
+                },
+                {
+                    expression: '(8x^2)(5x^3)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['13', '30', '40', '45'],
+                            correct: '40'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^5'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 8 por 5.',
+                        'Suma los exponentes 2 y 3.',
+                        'La respuesta es 40x^5.',
+                        'Recuerda que al multiplicar potencias con la misma base, sumas los exponentes.'
+                    ],
+                    finalAnswer: '40x^5'
+                },
+                {
+                    expression: '(9x^3)(4x^2)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['12', '24', '27', '36'],
+                            correct: '36'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^5', 'x^6', 'x^4', 'x^7'],
+                            correct: 'x^5'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 9 por 4.',
+                        'Suma los exponentes 3 y 2.',
+                        'La respuesta es 36x^5.',
+                        'La forma final es (coeficiente)x^(exponente).'
+                    ],
+                    finalAnswer: '36x^5'
+                },
+                {
+                    expression: '(10x^4)(3x^3)',
+                    steps: [
+                        {
+                            instruction: 'Multiplica los coeficientes:',
+                            options: ['13', '20', '30', '33'],
+                            correct: '30'
+                        },
+                        {
+                            instruction: 'Para la variable x, suma los exponentes:',
+                            options: ['x^6', 'x^7', 'x^8', 'x^9'],
+                            correct: 'x^7'
+                        }
+                    ],
+                    hints: [
+                        'Multiplica 10 por 3.',
+                        'Suma los exponentes 4 y 3.',
+                        'La respuesta es 30x^7.',
+                        'Recuerda que al multiplicar potencias con la misma base, sumas los exponentes.'
+                    ],
+                    finalAnswer: '30x^7'
+                }
+                // Puedes agregar más ejercicios de multiplicación aquí
+            ],
+            division: [
+                {
+                    expression: '\\frac{12x^5y^4}{3x^2y}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['2', '4', '6', '8'],
+                            correct: '4'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^2', 'x^3', 'x^4', 'x^5'],
+                            correct: 'x^3'
+                        },
+                        {
+                            instruction: 'Para la variable y, resta los exponentes:',
+                            options: ['y^2', 'y^3', 'y^4', 'y^5'],
+                            correct: 'y^3'
+                        }
+                    ],
+                    hints: [
+                        'En la división de monomios, divides los coeficientes y restas los exponentes.',
+                        'Los coeficientes son 12 ÷ 3.',
+                        'Para x: resta 2 de 5.',
+                        'Para y: resta 1 de 4.'
+                    ],
+                    finalAnswer: '4x^3y^3'
+                },
+                {
+                    expression: '\\frac{15x^4}{3x^2}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['3', '4', '5', '6'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^2', 'x^3', 'x^4', 'x^5'],
+                            correct: 'x^2'
+                        }
+                    ],
+                    hints: [
+                        'Divide 15 entre 3.',
+                        'Resta los exponentes de x: 4 - 2.',
+                        'La respuesta es 5x^2.',
+                        'Recuerda que al dividir potencias con la misma base, restas los exponentes.'
+                    ],
+                    finalAnswer: '5x^2'
+                },
+                {
+                    expression: '\\frac{20x^6}{4x^3}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^2', 'x^3', 'x^4', 'x^5'],
+                            correct: 'x^3'
+                        }
+                    ],
+                    hints: [
+                        'Divide 20 entre 4.',
+                        'Resta los exponentes de x: 6 - 3.',
+                        'La respuesta es 5x^3.',
+                        'Recuerda que al dividir potencias con la misma base, restas los exponentes.'
+                    ],
+                    finalAnswer: '5x^3'
+                },
+                {
+                    expression: '\\frac{18x^5y^3}{6x^2y}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['2', '3', '4', '6'],
+                            correct: '3'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^2', 'x^3', 'x^4', 'x^5'],
+                            correct: 'x^3'
+                        },
+                        {
+                            instruction: 'Para la variable y, resta los exponentes:',
+                            options: ['y^1', 'y^2', 'y^3', 'y^4'],
+                            correct: 'y^2'
+                        }
+                    ],
+                    hints: [
+                        'Divide 18 entre 6.',
+                        'Resta los exponentes de x: 5 - 2.',
+                        'Resta los exponentes de y: 3 - 1.',
+                        'La respuesta es 3x^3y^2.'
+                    ],
+                    finalAnswer: '3x^3y^2'
+                },
+                {
+                    expression: '\\frac{24x^7}{8x^3}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['2', '3', '4', '5'],
+                            correct: '3'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^3', 'x^4', 'x^5', 'x^6'],
+                            correct: 'x^4'
+                        }
+                    ],
+                    hints: [
+                        'Divide 24 entre 8.',
+                        'Resta los exponentes de x: 7 - 3.',
+                        'La respuesta es 3x^4.',
+                        'Recuerda que al dividir potencias con la misma base, restas los exponentes.'
+                    ],
+                    finalAnswer: '3x^4'
+                },
+                {
+                    expression: '\\frac{30x^8}{5x^2}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '6'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^6'
+                        }
+                    ],
+                    hints: [
+                        'Divide 30 entre 5.',
+                        'Resta los exponentes de x: 8 - 2.',
+                        'La respuesta es 6x^6.',
+                        'La forma final es (coeficiente)x^(exponente).'
+                    ],
+                    finalAnswer: '6x^6'
+                },
+                {
+                    expression: '\\frac{40x^9y^5}{10x^3y^2}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['3', '4', '5', '6'],
+                            correct: '4'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^6'
+                        },
+                        {
+                            instruction: 'Para la variable y, resta los exponentes:',
+                            options: ['y^2', 'y^3', 'y^4', 'y^5'],
+                            correct: 'y^3'
+                        }
+                    ],
+                    hints: [
+                        'Divide 40 entre 10.',
+                        'Resta los exponentes de x: 9 - 3.',
+                        'Resta los exponentes de y: 5 - 2.',
+                        'La respuesta es 4x^6y^3.'
+                    ],
+                    finalAnswer: '4x^6y^3'
+                },
+                {
+                    expression: '\\frac{50x^{10}}{10x^4}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^4', 'x^5', 'x^6', 'x^7'],
+                            correct: 'x^6'
+                        }
+                    ],
+                    hints: [
+                        'Divide 50 entre 10.',
+                        'Resta los exponentes de x: 10 - 4.',
+                        'La respuesta es 5x^6.',
+                        'Recuerda que al dividir potencias con la misma base, restas los exponentes.'
+                    ],
+                    finalAnswer: '5x^6'
+                },
+                {
+                    expression: '\\frac{60x^{11}}{12x^5}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^6'
+                        }
+                    ],
+                    hints: [
+                        'Divide 60 entre 12.',
+                        'Resta los exponentes de x: 11 - 5.',
+                        'La respuesta es 5x^6.',
+                        'La forma final es (coeficiente)x^(exponente).'
+                    ],
+                    finalAnswer: '5x^6'
+                },
+                {
+                    expression: '\\frac{70x^{12}y^6}{14x^6y^3}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^6'
+                        },
+                        {
+                            instruction: 'Para la variable y, resta los exponentes:',
+                            options: ['y^2', 'y^3', 'y^4', 'y^5'],
+                            correct: 'y^3'
+                        }
+                    ],
+                    hints: [
+                        'Divide 70 entre 14.',
+                        'Resta los exponentes de x: 12 - 6.',
+                        'Resta los exponentes de y: 6 - 3.',
+                        'La respuesta es 5x^6y^3.'
+                    ],
+                    finalAnswer: '5x^6y^3'
+                },
+                {
+                    expression: '\\frac{80x^{13}}{16x^7}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^5', 'x^6', 'x^7', 'x^8'],
+                            correct: 'x^6'
+                        }
+                    ],
+                    hints: [
+                        'Divide 80 entre 16.',
+                        'Resta los exponentes de x: 13 - 7.',
+                        'La respuesta es 5x^6.',
+                        'Recuerda que al dividir potencias con la misma base, restas los exponentes.'
+                    ],
+                    finalAnswer: '5x^6'
+                },
+                {
+                    expression: '\\frac{90x^{14}y^7}{18x^7y^4}',
+                    steps: [
+                        {
+                            instruction: 'Divide los coeficientes:',
+                            options: ['4', '5', '6', '7'],
+                            correct: '5'
+                        },
+                        {
+                            instruction: 'Para la variable x, resta los exponentes:',
+                            options: ['x^6', 'x^7', 'x^8', 'x^9'],
+                            correct: 'x^7'
+                        },
+                        {
+                            instruction: 'Para la variable y, resta los exponentes:',
+                            options: ['y^2', 'y^3', 'y^4', 'y^5'],
+                            correct: 'y^3'
+                        }
+                    ],
+                    hints: [
+                        'Divide 90 entre 18.',
+                        'Resta los exponentes de x: 14 - 7.',
+                        'Resta los exponentes de y: 7 - 4.',
+                        'La respuesta es 5x^7y^3.'
+                    ],
+                    finalAnswer: '5x^7y^3'
+                }
+                // Puedes agregar más ejercicios de división aquí
+            ]
+        };
+
+        let currentExercise = null;
+        let currentStep = 0;
+        let hintCount = 0;
+        let exerciseType = 'multiplication'; // 'multiplication' o 'division'
+        let exerciseIndex = 0;
+
+        function initializeExercise() {
+            currentExercise = exercises[exerciseType][exerciseIndex];
+            currentStep = 0;
+            hintCount = 0;
+            displayExercise();
+            updateProgress();
+        }
+
+        function displayExercise() {
+            const container = document.getElementById('exercise-container');
+            if (!currentExercise) {
+                // Si no hay más ejercicios, mostrar mensaje final
+                container.innerHTML = `
+                    <div class="final-message">
+                        ¡Hemos terminado! Ha sido muy buena la lección. 🎉
+                    </div>
+                `;
+                // Ocultar botones
+                document.getElementById('check-button').style.display = 'none';
+                document.getElementById('next-button').style.display = 'none';
+                return;
+            }
+
+            const step = currentExercise.steps[currentStep];
+            
+            let html = `
+                <div class="exercise-title">
+                    Resuelve: \\(${currentExercise.expression}\\)
+                </div>
+                <div class="step">
+                    <p>${step.instruction}</p>
+                    <select id="answer-select">
+                        <option value="">Selecciona una respuesta...</option>
+                        ${step.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            // Re-renderizar MathJax
+            MathJax.typesetPromise([container]).catch(function (err) {
+                console.error(err.message);
+            });
+        }
+
+        function checkAnswer() {
+            const select = document.getElementById('answer-select');
+            const step = currentExercise.steps[currentStep];
+            const isCorrect = select.value === step.correct;
+
+            // Evitar múltiples feedbacks
+            const existingFeedback = document.querySelector('.feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.textContent = isCorrect ? '¡Correcto!' : 'Intenta de nuevo.';
+
+            if (isCorrect) {
+                document.getElementById('check-button').style.display = 'none';
+                document.getElementById('next-button').style.display = 'inline-block';
+            } else {
+                if (hintCount < currentExercise.hints.length) {
+                    const hint = document.createElement('div');
+                    hint.className = 'hint';
+                    hint.textContent = `Pista: ${currentExercise.hints[hintCount]}`;
+                    feedback.appendChild(hint);
+                    hintCount++;
+                }
+            }
+
+            const container = document.getElementById('exercise-container');
+            container.appendChild(feedback);
+
+            // Re-renderizar MathJax por si hay nuevos contenidos
+            MathJax.typesetPromise([container]).catch(function (err) {
+                console.error(err.message);
+            });
+        }
+
+        function nextStep() {
+            currentStep++;
+            document.getElementById('check-button').style.display = 'inline-block';
+            document.getElementById('next-button').style.display = 'none';
+            
+            // Eliminar feedback anterior
+            const existingFeedback = document.querySelector('.feedback');
+            if (existingFeedback) {
+                existingFeedback.remove();
+            }
+
+            if (currentStep >= currentExercise.steps.length) {
+                // Pasar al siguiente ejercicio
+                exerciseIndex++;
+                if (exerciseIndex >= exercises[exerciseType].length) {
+                    // Cambiar el tipo de ejercicio si se han completado todos
+                    if (exerciseType === 'multiplication') {
+                        exerciseType = 'division';
+                    } else {
+                        // Si ya completó ambos tipos, mostrar mensaje final
+                        currentExercise = null;
+                        displayExercise();
+                        updateProgress();
+                        return;
+                    }
+                    exerciseIndex = 0;
+                }
+                initializeExercise();
+            } else {
+                displayExercise();
+            }
+            updateProgress();
+        }
+
+        function updateProgress() {
+            // Calcular el total de ejercicios
+            const totalExercises = exercises.multiplication.length + exercises.division.length;
+            // Calcular el progreso actual
+            let completedExercises = 0;
+            if (exerciseType === 'division') {
+                completedExercises += exercises.multiplication.length;
+            }
+            completedExercises += exerciseIndex;
+            const currentProgress = ((completedExercises) / totalExercises) * 100;
+            document.querySelector('.progress-fill').style.width = `${currentProgress}%`;
+        }
+
+        // Inicializar el primer ejercicio
+        initializeExercise();
+
+        // Función para cambiar el contraste (opcional)
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+    </script>
+</body>
+</html>
